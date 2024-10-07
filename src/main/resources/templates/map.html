@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>responsive navbar</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdb9a4LIj6aaLdxOB47HRZKD8ouOB344Q&libraries=places&libraries=places&libraries&libraries=places"></script>
+
+    <style>
+        * {
+       box-sizing: border-box;
+       margin: 0;
+       padding: 0;
+     }
+
+     body {
+       font-family: sans-serif;
+     }
+
+     a {
+       text-decoration: none;
+       color: black;
+       font-size: 1.2rem;
+       font-weight: bold;
+       text-transform: uppercase;
+     }
+
+     /* nav styles */
+
+     .nav {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       padding: 0px;
+       background-color: #008080;
+     }
+
+     .logo {
+       font-size: 30px;
+       color: #ffffff;
+       padding:0px;
+       margin:5px;
+       text-align:center;
+     }
+
+     .hamburger {
+       padding-right: 20px;
+       cursor: pointer;
+     }
+
+     .hamburger .line {
+       display: block;
+       width: 40px;
+       height: 5px;
+       margin-bottom: 10px;
+       background-color: black;
+     }
+
+     .nav__link {
+       position: fixed;
+       width: 94%;
+       top: 5rem;
+       left: 18px;
+       background-color: lightblue;
+     }
+
+     .nav__link a {
+       display: block;
+       text-align: center;
+       padding: 10px 0;
+     }
+
+     .nav__link a:hover {
+       background-color: lightcoral;
+     }
+
+     .hide {
+       display: none;
+     }
+
+     @media screen and (min-width: 600px) {
+       .nav__link {
+         display: block;
+         position: static;
+         width: auto;
+         margin-right: 20px;
+         background: none;
+       }
+
+       .nav__link a {
+         display: inline-block;
+         padding: 15px 20px;
+       }
+
+       .hamburger {
+         display: none;
+       }
+     }
+    </style>
+    <style>
+        #map {
+            height: 100%;
+        }
+    </style>
+    <style>
+        #map {
+            flex: 1;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            margin-right: 10px;
+            border: 1px solid green;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #fff;
+            background: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+            button:hover {
+                background: #0056b3;
+            }
+
+        .coordinates {
+          margin: 10px 0; /* Add more vertical spacing */
+          font-size: 16px; /* Slightly larger font for better readability */
+          padding: 8px; /* Add padding for space around text */
+          background-color: #f9f9f9; /* Subtle background color for better visibility */
+          border: 1px solid #ddd; /* Light border to separate the content */
+          border-radius: 4px; /* Rounded corners for a smooth look */
+          color: #333; /* A darker text color for better contrast */
+          line-height: 1.5; /* Improve line spacing for readability */
+          font-family: 'Arial', sans-serif; /* Use a clean, readable font */
+        }
+
+        .copy-icon {
+            margin-left: 10px;
+            font-size: 16px;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+            .copy-icon:hover {
+                color: #0056b3;
+            }
+
+        @media (max-width: 1024px) {
+            .heading h2 {
+                font-size: 18px;
+            }
+
+            input[type="text"] {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            button {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+
+            #info {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .heading {
+                height: 10%;
+                padding-left: 10px;
+            }
+
+                .heading h2 {
+                    font-size: 16px;
+                }
+
+            #controls {
+                flex-direction: column;
+                align-items: stretch;
+                height: auto;
+            }
+
+            input[type="text"] {
+                margin-right: 0;
+                margin-bottom: 10px;
+                width: 100%;
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            button {
+                width: 100%;
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+
+            #map {
+                height: 60%;
+            }
+
+            #info {
+                font-size: 12px;
+                height: auto;
+            }
+
+            .coordinates {
+                font-size: 12px;
+            }
+
+            .copy-icon {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="nav">
+  <center class="logo">
+    <a href="/images/bbmplogo.jfif">
+      <img src="/images/bbmplogo.jfif" style="width: 50px; height: auto;">
+    </a>
+    <div>ಬೃಹತ್ ಬೆಂಗಳೂರು ಮಹಾನಗರ ಪಾಲಿಕೆ ( BBMP )</div>
+  </center>
+    <div class="hamburger">
+        <span class="line"></span>
+        <span class="line"></span>
+        <span class="line"></span>
+    </div>
+
+    <div class="nav__link hide">
+        <a href="#"></a>
+        <a href="#"></a>
+        <a href="#"></a>
+        <a href="#"></a>
+    </div>
+</nav>
+<br/>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="form-group">
+                <div id="controls">
+                    <input id="searchInput" class="form-control" type="text" tabindex="5006"
+                           placeholder="Enter a location">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <!-- <div class="form-group">
+              <button class="btn btn-block btn-primary" tabindex="5007" onclick="manualSearch(); return false;">Search</button>
+            </div> -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            <div id="map" tabindex="5008" style="height: 400px;"></div>
+
+        </div>
+        <div class="col-md-3">
+            <div id="info">
+                <div class="coordinates">
+                    Latitude: <span id="latitude">N/A</span>
+                    <!-- <button onclick="getWard()">Get Ward</button> -->
+                </div>
+                <div class="coordinates">
+                    Longitude: <span id="longitude">N/A</span>
+                </div>
+            </div>
+            <div id="result1"
+                 style="margin-top: 20px; font-size: 16px; padding: 10px; background-color: #f0f4f7; border: 1px solid #ccc; border-radius: 5px; color: #333; font-family: 'Arial', sans-serif; line-height: 1.6;"></div>
+            <div id="result2"
+                 style="margin-top: 20px; font-size: 16px; padding: 10px; background-color: #f0f4f7; border: 1px solid #ccc; border-radius: 5px; color: #333; font-family: 'Arial', sans-serif; line-height: 1.6;"></div>
+            <!--        <div id="result1" style="margin-top: 20px; font-size: 16px;"></div>-->
+            <!--        <div id="result2" style="margin-top: 20px; font-size: 16px;"></div>-->
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script>
+    const hamburger = document.querySelector('.hamburger');
+  const navLink = document.querySelector('.nav__link');
+
+  hamburger.addEventListener('click', () => {
+    navLink.classList.toggle('hide');
+  });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    var map;
+    var marker;
+    var autocomplete;
+    var service;
+    var geocoder;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 12.9716, lng: 77.5946 },
+            zoom: 15
+        });
+
+        marker = new google.maps.Marker({
+            map: map,
+            draggable: true
+        });
+
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('searchInput'), { types: ['geocode'] }
+        );
+
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                return;
+            }
+
+            map.setCenter(place.geometry.location);
+            marker.setPosition(place.geometry.location);
+            displayCoordinates(place.geometry.location, "Search Result", place.formatted_address);
+        });
+
+        service = new google.maps.places.PlacesService(map);
+        geocoder = new google.maps.Geocoder();
+
+        // Add a click event listener on the map to update marker position and display coordinates
+        map.addListener('click', function (event) {
+            placeMarker(event.latLng);
+            displayCoordinates(event.latLng, "Clicked Result");
+            clearSearchInput();
+        });
+
+        // Add an event listener for marker drag end to update coordinates
+        google.maps.event.addListener(marker, 'dragend', function (event) {
+            displayCoordinates(event.latLng, "Dragged Result");
+            clearSearchInput();
+            geocoder.geocode({ 'location': event.latLng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        displayCoordinates(event.latLng, "Dragged Result", results[0].formatted_address);
+                    }
+                }
+            });
+        });
+    }
+
+    function manualSearch() {
+        var input = document.getElementById('searchInput').value;
+        var request = {
+            query: input,
+            fields: ['name', 'geometry']
+        };
+
+        service.findPlaceFromQuery(request, function (results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
+                displayCoordinates(results[0].geometry.location, "Search Result", results[0].name);
+            } else {
+                document.getElementById('resultType').innerText = 'Result: N/A';
+                document.getElementById('latitude').innerText = 'N/A';
+                document.getElementById('longitude').innerText = 'N/A';
+                console.log('Place search failed:', status);
+            }
+        });
+    }
+
+    var lat;
+    var lon;
+
+    function displayCoordinates(location, resultType, address) {
+        //document.getElementById('resultType').innerText = 'Result: ' + resultType + (address ? ' - ' + address : '');
+        document.getElementById('latitude').innerText = location.lat();
+        document.getElementById('longitude').innerText = location.lng();
+        getWard();
+        document.getElementById('latInput').value = location.lat();
+        document.getElementById('lngInput').value = location.lng();
+        lat = location.lat();
+        lon = location.lng();
+
+    }
+
+    function placeMarker(location) {
+        if (!marker) {
+            marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+        } else {
+            marker.setPosition(location);
+        }
+        map.setCenter(location);
+    }
+
+    function clearSearchInput() {
+        document.getElementById('searchInput').value = '';
+    }
+
+    function copyToClipboard(id) {
+        var text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text).then(function () {
+            alert('Copied to clipboard: ' + text);
+        }, function (err) {
+            console.error('Could not copy text: ', err);
+        });
+    }
+
+
+
+
+    function getWard1(){
+
+        alert("lat==>"+ lat +"===>lon==>"+lon);
+    }
+  function getWard() {
+  const latitude = document.getElementById('latitude').innerText;
+  const longitude = document.getElementById('longitude').innerText;
+
+  if (latitude === 'N/A' || longitude === 'N/A') {
+    alert("Please select a valid location on the map to get the ward.");
+    return;
+  }
+
+  console.log("Latitude: ", latitude);
+  console.log("Longitude: ", longitude);
+
+  // Send the latitude and longitude to the backend using Fetch API
+  fetch('/find-ward', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`
+  })
+  .then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json(); // or response.json() if your backend sends JSON
+  })
+  .then(data => {
+    // Access the wardName and wardNumber from the response
+    document.getElementById('result1').innerText = "Ward Name: " + data.wardName; // Accessing wardName
+    document.getElementById('result2').innerText = "Ward No: " + data.wardNumber; // Accessing wardNumber
+  })
+  .catch(error => {
+    console.error('There was a problem with the fetch operation:', error);
+    alert('An error occurred while retrieving the ward information.');
+  });
+  }
+
+  window.onload = initMap;
+
+</script>
+</html>
